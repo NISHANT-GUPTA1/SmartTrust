@@ -1,0 +1,70 @@
+{
+  "name": "Mega Mart - Smart Grocery Platform",
+  "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:18",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-json",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense",
+        "ms-vscode.vscode-eslint",
+        "ms-vscode.vscode-react-refactor",
+        "ms-vscode.vscode-npm-script",
+        "ms-vscode.vscode-console-reader",
+        "formulahendry.terminal-here"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "emmet.includeLanguages": {
+          "typescript": "html",
+          "typescriptreact": "html"
+        },
+        "tailwindCSS.experimental.classRegex": [
+          ["cn\\(([^)]*)\\)", "'([^']*)'"],
+          ["clsx\\(([^)]*)\\)", "'([^']*)'"]
+        ]
+      }
+    }
+  },
+
+  "forwardPorts": [8080, 5000, 3000],
+  "portsAttributes": {
+    "8080": {
+      "label": "Frontend (Vite)",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "Backend (Python)",
+      "onAutoForward": "silent"
+    },
+    "3000": {
+      "label": "Alternative Frontend",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "postCreateCommand": "npm install && echo '🎉 Mega Mart development environment is ready!'",
+  
+  "remoteUser": "vscode",
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/.vscode,target=/workspaces/${localWorkspaceFolderBasename}/.vscode,type=bind,consistency=cached"
+  ]
+}
