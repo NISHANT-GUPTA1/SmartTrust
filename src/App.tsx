@@ -5,9 +5,15 @@ import Index from './pages/Index';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
+import Category from './pages/Category';
+import TodaysDeals from './pages/TodaysDeals';
 import AIAssistantDashboard from './components/AIAssistantDashboard';
+import ProductDetailPage from './components/ProductDetailPage';
 import { FaRobot } from 'react-icons/fa';
 import { useAIStore } from './store/aiStore';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import Chats from './pages/Chats';
 
 // Global chat state
 const GlobalChatButton: React.FC = () => {
@@ -201,9 +207,15 @@ function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/category/:categoryName" element={<Category />} />
+          <Route path="/todays-deals" element={<TodaysDeals />} />
           <Route path="/ai-assistant" element={<AIAssistantDashboard />} />
+          <Route path="/product/:productId" element={<ProductDetailPage />} />
+          <Route path="/chats" element={<Chats />} />
         </Routes>
         <GlobalChatButton />
+        <Toaster />
+        <SonnerToaster />
       </div>
     </Router>
   );

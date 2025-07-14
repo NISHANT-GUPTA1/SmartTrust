@@ -16,6 +16,9 @@ interface CartStore {
   getTotalItems: () => number;
   loadCart: () => void;
   saveCart: () => void;
+  // New grocery tracking methods
+  trackGroceryPurchase: (productId: string, quantity: number) => void;
+  getGroceryCategories: () => string[];
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -39,6 +42,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
       });
     }
     get().saveCart();
+    
+    // Track grocery purchase if it's a grocery item
+    const groceryCategories = ['Dairy', 'Produce', 'Bakery', 'Pantry', 'Frozen', 'Meat & Seafood'];
+    if (groceryCategories.includes(product.category)) {
+      get().trackGroceryPurchase(product.id, existingItem ? existingItem.quantity + 1 : 1);
+    }
   },
 
   removeItem: (productId) => {
@@ -94,5 +103,27 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (error) {
       console.error('Error saving cart to localStorage:', error);
     }
+  },
+
+  trackGroceryPurchase: (productId: string, quantity: number) => {
+    // This would typically integrate with the grocery restock store
+    // For now, we'll just save to localStorage
+    try {
+      const existingPurchases = JSON.parse(localStorage.getItem('grocery-purchases') || '[]');
+      const newPurchase = {
+        productId,
+        quantity,
+        date: new Date().toISOString(),
+        price: get().items.find(item => item.id === productId)?.price || 0
+      };
+      existingPurchases.push(newPurchase);
+      localStorage.setItem('grocery-purchases', JSON.stringify(existingPurchases));
+    } catch (error) {
+      console.error('Error tracking grocery purchase:', error);
+    }
+  },
+
+  getGroceryCategories: () => {
+    return ['Dairy', 'Produce', 'Bakery', 'Pantry', 'Frozen', 'Meat & Seafood', 'Beverages'];
   },
 }));

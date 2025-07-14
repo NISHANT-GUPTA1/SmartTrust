@@ -8,7 +8,7 @@ const sampleProducts: Product[] = [
     name: 'iPhone 15 Pro Max 256GB - Natural Titanium',
     price: 1199.99,
     originalPrice: 1299.99,
-    image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop&auto=format',
     category: 'Electronics',
     rating: 4.8,
     reviews: 1247,
@@ -36,33 +36,33 @@ const sampleProducts: Product[] = [
   },
   {
     id: '2',
-    name: 'Samsung 65" 4K Smart TV',
-    price: 599.99,
-    originalPrice: 799.99,
-    image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop',
-    category: 'Electronics',
+    name: 'Organic Cotton T-Shirt',
+    price: 29.99,
+    originalPrice: 39.99,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
+    category: 'Clothing',
     rating: 4.6,
-    reviews: 892,
+    reviews: 128,
     freeShipping: true,
     inStock: true,
-    description: 'Premium 4K Smart TV with HDR and streaming capabilities',
-    sustainability_score: 6.8,
-    eco_friendly: false,
-    trust_score: 8.4,
-    verified_reviews: 654,
-    ai_recommendations: ['TV Wall Mount', 'Sound Bar', 'HDMI Cable'],
-    consumption_rate: 0.02,
-    restock_prediction: 'Regular restock schedule',
-    carbon_footprint: 120,
+    description: 'Comfortable organic cotton t-shirt with AR try-on capability',
+    sustainability_score: 9.2,
+    eco_friendly: true,
+    trust_score: 8.7,
+    verified_reviews: 98,
+    ai_recommendations: ['Organic Cotton Jeans', 'Sustainable Sneakers'],
+    consumption_rate: 0.3,
+    restock_prediction: 'Good stock levels',
+    carbon_footprint: 12,
     social_proof: {
-      recent_purchases: 89,
-      trending: false,
-      community_favorite: false
+      recent_purchases: 23,
+      trending: true,
+      community_favorite: true
     },
     alternatives: {
-      cheaper: ['Samsung 55" 4K TV', 'TCL 65" 4K TV'],
-      eco_friendly: ['Energy Star Certified TV', 'Refurbished Samsung TV'],
-      premium: ['Samsung 75" QLED', 'LG OLED 65"']
+      cheaper: ['Regular Cotton T-Shirt', 'Blend T-Shirt'],
+      eco_friendly: ['Hemp T-Shirt', 'Bamboo Fiber T-Shirt'],
+      premium: ['Premium Organic Cotton Tee', 'Designer Sustainable Shirt']
     }
   },
   {
@@ -380,29 +380,61 @@ const sampleProducts: Product[] = [
 interface ProductStore {
   products: Product[];
   filteredProducts: Product[];
-  searchQuery: string;
+  searchQueries: {
+    home: string;
+    deals: string;
+    community: string;
+    profile: string;
+    ai: string;
+  };
   selectedCategory: string;
-  setSearchQuery: (query: string) => void;
+  currentContext: 'home' | 'deals' | 'community' | 'profile' | 'ai';
+  setSearchQuery: (query: string, context?: 'home' | 'deals' | 'community' | 'profile' | 'ai') => void;
   setSelectedCategory: (category: string) => void;
+  setCurrentContext: (context: 'home' | 'deals' | 'community' | 'profile' | 'ai') => void;
   filterProducts: () => void;
+  getCurrentSearchQuery: () => string;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: sampleProducts,
   filteredProducts: sampleProducts,
-  searchQuery: '',
+  searchQueries: {
+    home: '',
+    deals: '',
+    community: '',
+    profile: '',
+    ai: ''
+  },
   selectedCategory: 'All',
+  currentContext: 'home',
 
-  setSearchQuery: (query) => {
-    set({ searchQuery: query });
+  setSearchQuery: (query, context) => {
+    const targetContext = context || get().currentContext;
+    set(state => ({
+      searchQueries: {
+        ...state.searchQueries,
+        [targetContext]: query
+      }
+    }));
   },
 
   setSelectedCategory: (category) => {
     set({ selectedCategory: category });
   },
 
+  setCurrentContext: (context) => {
+    set({ currentContext: context });
+  },
+
+  getCurrentSearchQuery: () => {
+    const { searchQueries, currentContext } = get();
+    return searchQueries[currentContext];
+  },
+
   filterProducts: () => {
-    const { products, searchQuery, selectedCategory } = get();
+    const { products, searchQueries, selectedCategory, currentContext } = get();
+    const searchQuery = searchQueries[currentContext];
     
     let filtered = products;
 
@@ -411,7 +443,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       filtered = filtered.filter(product => product.category === selectedCategory);
     }
 
-    // Filter by search query
+    // Filter by search query for current context
     if (searchQuery.trim()) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -1,0 +1,1 @@
+import Chats from './Chats';

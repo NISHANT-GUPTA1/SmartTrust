@@ -1,8 +1,14 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    navigate('/todays-deals');
+  };
   return (
     <section className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12 mb-8">
       <div className="container mx-auto px-4">
@@ -14,7 +20,10 @@ export const HeroSection = () => {
             <p className="text-xl mb-6 opacity-90">
               Shop millions of items with everyday low prices and free shipping on orders $35+
             </p>
-            <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3 text-lg">
+            <Button 
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3 text-lg"
+              onClick={handleShopNow}
+            >
               Shop Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

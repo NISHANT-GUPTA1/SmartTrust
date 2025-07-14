@@ -5,22 +5,24 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const Cart: React.FC = () => {
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCartStore();
+  const { t } = useTranslation();
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      toast.error('Your cart is empty!');
+      toast.error(t('Your cart is empty!'));
       return;
     }
-    toast.success('Redirecting to checkout...');
+    toast.success(t('Redirecting to checkout...'));
     // Here you would typically redirect to a checkout page
   };
 
   const handleClearCart = () => {
     clearCart();
-    toast.success('Cart cleared!');
+    toast.success(t('Cart cleared!'));
   };
 
   return (
@@ -32,7 +34,7 @@ const Cart: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 <ShoppingBag className="text-blue-600" />
-                Shopping Cart ({items.length})
+                {t('Shopping Cart')} ({items.length})
               </h1>
               {items.length > 0 && (
                 <Button
@@ -40,7 +42,7 @@ const Cart: React.FC = () => {
                   onClick={handleClearCart}
                   className="text-red-600 hover:text-red-700"
                 >
-                  Clear Cart
+                  {t('Clear Cart')}
                 </Button>
               )}
             </div>
@@ -48,10 +50,10 @@ const Cart: React.FC = () => {
             {items.length === 0 ? (
               <div className="text-center py-12">
                 <ShoppingBag className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
-                <p className="text-gray-500 mb-6">Add some products to get started!</p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('Your cart is empty')}</h2>
+                <p className="text-gray-500 mb-6">{t('Add some products to get started!')}</p>
                 <Button onClick={() => window.history.back()}>
-                  Continue Shopping
+                  {t('Continue Shopping')}
                 </Button>
               </div>
             ) : (
@@ -107,7 +109,7 @@ const Cart: React.FC = () => {
 
                 <div className="border-t pt-6">
                   <div className="flex justify-between items-center text-2xl font-bold mb-6">
-                    <span>Total:</span>
+                    <span>{t('Total:')}</span>
                     <span>${getTotalPrice().toFixed(2)}</span>
                   </div>
                   <div className="space-y-3">
@@ -115,18 +117,18 @@ const Cart: React.FC = () => {
                       onClick={handleCheckout} 
                       className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
                     >
-                      Proceed to Checkout
+                      {t('Proceed to Checkout')}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => window.history.back()}
                       className="w-full"
                     >
-                      Continue Shopping
+                      {t('Continue Shopping')}
                     </Button>
                   </div>
                   <p className="text-sm text-gray-500 text-center mt-4">
-                    Free shipping on orders over $35
+                    {t('Free shipping on orders over $35')}
                   </p>
                 </div>
               </div>

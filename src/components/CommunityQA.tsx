@@ -1,4 +1,10 @@
 import React, { useState } from 'react';
+import { ProductQA } from '@/utils/productReviewsQA';
+
+interface CommunityQAProps {
+  qa?: ProductQA[];
+  productId?: string;
+}
 
 const mockQA = [
   {
@@ -45,7 +51,7 @@ const mockQA = [
 
 const spamWords = ['spam', 'fake', 'scam', 'fraud'];
 
-const CommunityQA: React.FC = () => {
+const CommunityQA: React.FC<CommunityQAProps> = ({ qa: propQA, productId }) => {
   const [qa, setQA] = useState(mockQA);
   const [question, setQuestion] = useState('');
   const [anonymous, setAnonymous] = useState(false);
@@ -53,6 +59,34 @@ const CommunityQA: React.FC = () => {
   const [answer, setAnswer] = useState('');
   const [answeringQ, setAnsweringQ] = useState<string | null>(null);
   const [answerAnon, setAnswerAnon] = useState(false);
+
+  // Update Q&A when propQA changes
+  React.useEffect(() => {
+    if (propQA) {
+      // Convert ProductQA to the expected format
+      const convertedQA = propQA.map((item, index) => ({
+        id: `q${index + 1}`,
+        question: item.question,
+        user: item.user,
+        isVerified: true,
+        trustScore: 8.5,
+        anonymous: false,
+        createdAt: new Date().toISOString(),
+        answers: [
+          {
+            id: `a${index + 1}`,
+            answer: item.answer,
+            user: item.user,
+            isVerified: true,
+            trustScore: 8.5,
+            anonymous: false,
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      }));
+      setQA(convertedQA);
+    }
+  }, [propQA]);
 
   const handleAsk = () => {
     if (spamWords.some(word => question.toLowerCase().includes(word))) {

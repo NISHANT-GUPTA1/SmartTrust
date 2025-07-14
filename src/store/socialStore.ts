@@ -35,6 +35,26 @@ interface SocialStore {
   getInfluencerCarts: () => Promise<void>;
 }
 
+export interface ChatMessage {
+  sender: string;
+  text: string;
+  timestamp: number;
+}
+
+export interface ChatThread {
+  username: string;
+  messages: ChatMessage[];
+}
+
+interface ChatStoreState {
+  threads: ChatThread[];
+  openThread: string | null;
+  startChat: (username: string) => void;
+  sendMessage: (username: string, text: string, sender: string) => void;
+  getMessages: (username: string) => ChatMessage[];
+  setOpenThread: (username: string | null) => void;
+}
+
 const mockSocialCarts: SocialCart[] = [
   {
     id: 'social-1',
@@ -300,4 +320,34 @@ export const useSocialStore = create<SocialStore>((set, get) => ({
     await new Promise(resolve => setTimeout(resolve, 700));
     set({ influencerCarts: mockInfluencerCarts });
   }
+}));
+
+export const useChatStore = create<ChatStoreState>((set, get) => ({
+  threads: [],
+  openThread: null,
+  startChat: (username) => {
+    const exists = get().threads.find(t => t.username === username);
+    if (!exists) {
+      set(state => ({
+        threads: [...state.threads, { username, messages: [] }],
+        openThread: username,
+      }));
+    } else {
+      set({ openThread: username });
+    }
+  },
+  sendMessage: (username, text, sender) => {
+    set(state => ({
+      threads: state.threads.map(t =>
+        t.username === username
+          ? { ...t, messages: [...t.messages, { sender, text, timestamp: Date.now() }] }
+          : t
+      ),
+    }));
+  },
+  getMessages: (username) => {
+    const thread = get().threads.find(t => t.username === username);
+    return thread ? thread.messages : [];
+  },
+  setOpenThread: (username) => set({ openThread: username }),
 }));

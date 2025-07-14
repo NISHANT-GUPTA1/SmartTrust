@@ -7,8 +7,9 @@ import { useProductStore } from '@/store/productStore';
 import { Badge } from '@/components/ui/badge';
 
 export const ProductGrid = () => {
-  const { products, filteredProducts, searchQuery, selectedCategory, setSelectedCategory, filterProducts } = useProductStore();
+  const { products, filteredProducts, getCurrentSearchQuery, selectedCategory, setSelectedCategory, filterProducts } = useProductStore();
   const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'rating' | 'popular'>('popular');
+  const searchQuery = getCurrentSearchQuery();
 
   useEffect(() => {
     filterProducts();
@@ -63,7 +64,16 @@ export const ProductGrid = () => {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar */}
         <div className="lg:w-64 flex-shrink-0">
-          <ProductFilters />
+          <ProductFilters 
+            onFiltersApply={(filters) => {
+              // TODO: Implement filter logic
+              console.log('Filters applied:', filters);
+            }}
+            onFiltersClear={() => {
+              // TODO: Implement clear filters logic  
+              console.log('Filters cleared');
+            }}
+          />
         </div>
 
         {/* Products */}
@@ -77,8 +87,10 @@ export const ProductGrid = () => {
               <span className="text-sm text-gray-600">Sort by:</span>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as 'price-low' | 'price-high' | 'rating' | 'popular')}
                 className="border border-gray-300 rounded px-3 py-1 text-sm"
+                title="Sort products by"
+                aria-label="Sort products by"
               >
                 <option value="popular">Most Popular</option>
                 <option value="price-low">Price: Low to High</option>

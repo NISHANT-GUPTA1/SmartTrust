@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Heart, Star, ShoppingCart, X, Plus, Minus } from 'lucide-react';
+import { Heart, Star, ShoppingCart, X, Plus, Minus, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,8 +8,9 @@ import { useCartStore } from '@/store/cartStore';
 import { Product } from '@/types/product';
 import { toast } from 'sonner';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
-import { CartSidebarContext } from '@/pages/Index';
+import { CartSidebarContext } from '@/contexts/CartSidebarContext';
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -78,20 +79,28 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               }`}
             />
           </Button>
-          {/* Product Image */}
-          <div className="aspect-square bg-gray-100 overflow-hidden">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-            />
-          </div>
+          {/* Product Image - Clickable to go to detail page */}
+          <Link to={`/product/${product.id}`} className="block">
+            <div className="aspect-square bg-gray-100 overflow-hidden cursor-pointer">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder.svg';
+                }}
+              />
+            </div>
+          </Link>
         </div>
         <CardContent className="p-4">
-          {/* Product Name */}
-          <h3 className="font-bold text-base mb-2 line-clamp-2 min-h-[2.5rem] text-blue-900">
-            {product.name}
-          </h3>
+          {/* Product Name - Clickable to go to detail page */}
+          <Link to={`/product/${product.id}`}>
+            <h3 className="font-bold text-base mb-2 line-clamp-2 min-h-[2.5rem] text-blue-900 hover:text-blue-700 cursor-pointer transition-colors">
+              {product.name}
+            </h3>
+          </Link>
           {/* Rating */}
           <div className="flex items-center mb-2">
             <div className="flex items-center">
@@ -134,7 +143,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {/* Add to Cart Button */}
           <Button
             onClick={handleAddToCart}
-            className="w-full bg-amazon-orange hover:bg-orange-600 text-white font-bold text-base py-2 rounded shadow-lg mb-1"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-base py-2 rounded shadow-lg mb-1"
             size="sm"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
@@ -218,12 +227,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <div className="sticky bottom-0 bg-white pt-2 pb-2 z-10">
               <Button
                 onClick={handleAddToCart}
-                className="w-full bg-amazon-orange hover:bg-orange-600 text-white font-bold text-lg py-3 rounded shadow-lg"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg py-3 rounded shadow-lg mb-2"
                 size="lg"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add {quantity} to cart
               </Button>
+              
+              {/* View Full Product Details Button */}
+              <Link to={`/product/${product.id}`}>
+                <Button
+                  variant="outline"
+                  className="w-full border-purple-600 text-purple-700 hover:bg-purple-50 font-semibold"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Product Details
+                </Button>
+              </Link>
             </div>
             <Button onClick={handleWishlist} variant="outline" className={`mt-2 font-semibold text-base py-2 w-full ${isWishlisted ? 'border-red-500 text-red-500' : 'border-blue-600 text-blue-700'}`}>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</Button>
             <DialogClose asChild>

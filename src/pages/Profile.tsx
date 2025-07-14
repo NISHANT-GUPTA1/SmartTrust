@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { Footer } from '../components/Footer';
 
 const mockUser = {
-  name: 'Ansh Gupta',
+  name: 'Nishant Gupta',
   avatar: '',
   trustScore: 8.8,
   badges: ['Verified Buyer', 'Green Shopper', 'Helper'],
@@ -17,7 +17,7 @@ const mockUser = {
     budget: 1000,
   },
   buddy: {
-    name: 'EcoShopper99',
+    name: 'Ansh Gupta',
     trustScore: 9.2,
     avatar: '',
     similarity: 92,
