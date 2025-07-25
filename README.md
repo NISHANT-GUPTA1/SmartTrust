@@ -7,7 +7,6 @@
 
 There are several ways of editing your application.
 
-**Use Lovable**
 
 Simply visit the [Lovable Project](https://lovable.dev/projects/3a7ad411-f387-47c9-bde0-9717b4917615) and start prompting.
 
