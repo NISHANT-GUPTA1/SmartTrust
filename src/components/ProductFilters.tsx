@@ -20,7 +20,7 @@ interface ProductFiltersProps {
 }
 
 export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFiltersProps) => {
-  const [priceRange, setPriceRange] = useState([0, 1500]);
+  const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [specialOffers, setSpecialOffers] = useState({
@@ -29,7 +29,8 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
     rollback: false
   });
 
-  const brands = ['Electronics', 'Home & Garden', 'Clothing', 'Health & Beauty', 'Sports', 'Books'];
+  // Updated to match actual product categories
+  const brands = ['Electronics', 'Home & Garden', 'Clothing', 'Fashion', 'Health & Beauty', 'Sports', 'Books'];
   const ratings = [4, 3, 2, 1];
 
   const handleBrandChange = (brand: string, checked: boolean) => {
@@ -53,11 +54,16 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
       selectedBrands: selectedBrands,
       minRating: selectedRating,
       hasDiscount: specialOffers.onSale,
-      specialOffers: Object.keys(specialOffers).filter(key => specialOffers[key])
+      specialOffers: Object.keys(specialOffers).filter(key => 
+        specialOffers[key as keyof typeof specialOffers]
+      )
     };
     
     console.log('Applying filters:', filters);
     console.log('Price range being applied:', priceRange);
+    console.log('Selected brands:', selectedBrands);
+    console.log('Min rating:', selectedRating);
+    console.log('Special offers:', filters.specialOffers);
     
     if (onFiltersApply) {
       onFiltersApply(filters);
@@ -65,7 +71,7 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
   };
 
   const handleClearAll = () => {
-    setPriceRange([0, 1500]);
+    setPriceRange([0, 2000]);
     setSelectedBrands([]);
     setSelectedRating(0);
     setSpecialOffers({
@@ -82,7 +88,7 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
   const hasActiveFilters = selectedBrands.length > 0 || 
                           selectedRating > 0 || 
                           priceRange[0] > 0 || 
-                          priceRange[1] < 1500 ||
+                          priceRange[1] < 2000 ||
                           Object.values(specialOffers).some(Boolean);
 
   return (
@@ -97,7 +103,7 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
             <Slider
               value={priceRange}
               onValueChange={setPriceRange}
-              max={1500}
+              max={2000}
               step={10}
               className="w-full"
             />
@@ -246,7 +252,7 @@ export const ProductFilters = ({ onFiltersApply, onFiltersClear }: ProductFilter
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-gray-900">Active Filters:</h4>
           <div className="flex flex-wrap gap-1">
-            {priceRange[0] > 0 || priceRange[1] < 1500 ? (
+            {priceRange[0] > 0 || priceRange[1] < 2000 ? (
               <Badge variant="secondary" className="text-xs">
                 ${priceRange[0]} - ${priceRange[1]}
               </Badge>

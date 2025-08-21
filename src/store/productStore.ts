@@ -389,11 +389,26 @@ interface ProductStore {
   };
   selectedCategory: string;
   currentContext: 'home' | 'deals' | 'community' | 'profile' | 'ai';
+  filters: {
+    priceRange: [number, number];
+    selectedBrands: string[];
+    minRating: number;
+    hasDiscount: boolean;
+    specialOffers: string[];
+  };
   setSearchQuery: (query: string, context?: 'home' | 'deals' | 'community' | 'profile' | 'ai') => void;
   setSelectedCategory: (category: string) => void;
   setCurrentContext: (context: 'home' | 'deals' | 'community' | 'profile' | 'ai') => void;
   filterProducts: () => void;
   getCurrentSearchQuery: () => string;
+  applyAdvancedFilters: (filters: {
+    priceRange: [number, number];
+    selectedBrands: string[];
+    minRating: number;
+    hasDiscount: boolean;
+    specialOffers: string[];
+  }) => void;
+  clearAdvancedFilters: () => void;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
@@ -408,6 +423,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
   selectedCategory: 'All',
   currentContext: 'home',
+  filters: {
+    priceRange: [0, 2000],
+    selectedBrands: [],
+    minRating: 0,
+    hasDiscount: false,
+    specialOffers: []
+  },
 
   setSearchQuery: (query, context) => {
     const targetContext = context || get().currentContext;
@@ -433,7 +455,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   filterProducts: () => {
-    const { products, searchQueries, selectedCategory, currentContext } = get();
+    const { products, searchQueries, selectedCategory, currentContext, filters } = get();
     const searchQuery = searchQueries[currentContext];
     
     let filtered = products;
@@ -451,6 +473,55 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       );
     }
 
+    // Apply advanced filters
+    // Price range filter
+    filtered = filtered.filter(product => 
+      product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
+    );
+
+    // Brand/Category filter (using category as brand for now)
+    if (filters.selectedBrands.length > 0) {
+      filtered = filtered.filter(product => 
+        filters.selectedBrands.includes(product.category)
+      );
+    }
+
+    // Rating filter
+    if (filters.minRating > 0) {
+      filtered = filtered.filter(product => product.rating >= filters.minRating);
+    }
+
+    // Discount filter
+    if (filters.hasDiscount) {
+      filtered = filtered.filter(product => product.originalPrice && product.originalPrice > product.price);
+    }
+
+    // Special offers filter
+    if (filters.specialOffers.includes('freeShipping')) {
+      filtered = filtered.filter(product => product.freeShipping);
+    }
+    if (filters.specialOffers.includes('onSale')) {
+      filtered = filtered.filter(product => product.originalPrice && product.originalPrice > product.price);
+    }
+
     set({ filteredProducts: filtered });
+  },
+
+  applyAdvancedFilters: (newFilters) => {
+    set({ filters: newFilters });
+    get().filterProducts();
+  },
+
+  clearAdvancedFilters: () => {
+    set({ 
+      filters: {
+        priceRange: [0, 2000],
+        selectedBrands: [],
+        minRating: 0,
+        hasDiscount: false,
+        specialOffers: []
+      }
+    });
+    get().filterProducts();
   },
 }));

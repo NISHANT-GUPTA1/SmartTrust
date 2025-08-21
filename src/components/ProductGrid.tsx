@@ -7,7 +7,16 @@ import { useProductStore } from '@/store/productStore';
 import { Badge } from '@/components/ui/badge';
 
 export const ProductGrid = () => {
-  const { products, filteredProducts, getCurrentSearchQuery, selectedCategory, setSelectedCategory, filterProducts } = useProductStore();
+  const { 
+    products, 
+    filteredProducts, 
+    getCurrentSearchQuery, 
+    selectedCategory, 
+    setSelectedCategory, 
+    filterProducts,
+    applyAdvancedFilters,
+    clearAdvancedFilters 
+  } = useProductStore();
   const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'rating' | 'popular'>('popular');
   const searchQuery = getCurrentSearchQuery();
 
@@ -66,12 +75,12 @@ export const ProductGrid = () => {
         <div className="lg:w-64 flex-shrink-0">
           <ProductFilters 
             onFiltersApply={(filters) => {
-              // TODO: Implement filter logic
               console.log('Filters applied:', filters);
+              applyAdvancedFilters(filters);
             }}
             onFiltersClear={() => {
-              // TODO: Implement clear filters logic  
               console.log('Filters cleared');
+              clearAdvancedFilters();
             }}
           />
         </div>
